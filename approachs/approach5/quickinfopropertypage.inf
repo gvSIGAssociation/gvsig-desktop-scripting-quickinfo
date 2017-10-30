@@ -1,0 +1,14 @@
+[script]
+enable = true
+
+[Unit]
+type = Script
+name = quickinfopropertypage
+description = 
+createdBy = 
+version = 
+
+[Script]
+main = main
+Lang = python
+
