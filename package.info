@@ -17,6 +17,5 @@ categories=
 description=Herramienta que permite mostrar informacion de una capa vectorial sobre la vista y se va actualizando tal como se desplaza el cursor del raton sobre esta.
 owner-url=
 buildNumber=0
-download-url=http\://devel.gvsig.org/download/projects/gvsig-scripts/pool/quickinfo/gvSIG-desktop-2.4.0-quickinfo-1.0.0-0-testing-all-all-j1_7.gvspkg
 gvSIG-version=2.4.0
 name=quickinfo
