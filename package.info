@@ -1,11 +1,11 @@
 #
-#Tue Oct 24 21:29:01 CEST 2017
+#Thu Dec 07 09:36:16 CET 2017
 owner=gvSIG Association
 code=quickinfo
 java-version=j1_7
 official=true
 type=Script
-version=1.0.0-0
+version=1.0.0-2
 state=testing
 operating-system=all
 dependencies=
@@ -13,9 +13,9 @@ sources-url=
 web-url=
 architecture=all
 model-version=1.0.1
-categories=
-description=Herramienta que permite mostrar informacion de una capa vectorial sobre la vista y se va actualizando tal como se desplaza el cursor del raton sobre esta.
+categories=, View
+description=Show information over a vector data shape and it is updated when the mouse is moving between features.
 owner-url=
-buildNumber=0
+buildNumber=2
 gvSIG-version=2.4.0
-name=quickinfo
+name=Quick Info
