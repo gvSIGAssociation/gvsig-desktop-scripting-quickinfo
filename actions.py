@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import gvsig
+from gvsig import getResource
 
 import os.path
 
@@ -16,10 +17,14 @@ from org.gvsig.andami import PluginsLocator
 from org.gvsig.scripting.app.extension import ScriptingExtension
 from org.gvsig.tools.swing.api import ToolsSwingLocator
 
-from quickinfo import QuickInfo
+from addons.quickinfo.quickinfo import QuickInfo
   
 from org.gvsig.tools import ToolsLocator
 
+def trace(msg):
+  #print "###> ", msg
+  pass
+  
 class QuickinfoExtension(ScriptingExtension):
   def __init__(self):
     pass
@@ -29,7 +34,7 @@ class QuickinfoExtension(ScriptingExtension):
 
   def isLayerValid(self, layer):
     if layer == None:
-      #print "### QuickinfoExtension.isLayerValid: None, return False"
+      trace("QuickinfoExtension.isLayerValid: None, return False")
       return False
     mode = layer.getProperty("quickinfo.mode")
     if mode in ("", None):
@@ -47,7 +52,7 @@ class QuickinfoExtension(ScriptingExtension):
   def execute(self,actionCommand, *args):
     actionCommand = actionCommand.lower()
     if actionCommand == "settool-quickinfo":
-      #print "### QuickinfoExtension.execute(%s)" % repr(actionCommand)
+      trace("QuickinfoExtension.execute(%s)" % repr(actionCommand))
       layer = currentLayer()
       if not self.isLayerValid(layer):
         return
@@ -62,7 +67,7 @@ def selfRegister():
   actionManager = PluginsLocator.getActionInfoManager()
   iconTheme = ToolsSwingLocator.getIconThemeManager().getCurrent()
 
-  quickinfo_icon = File(join(dirname(__file__),"images","quickinfo.png")).toURI().toURL()
+  quickinfo_icon = File(getResource(__file__,"images","tools-quickinfo.png")).toURI().toURL()
   iconTheme.registerDefault("scripting.quickinfo", "action", "tools-quickinfo", None, quickinfo_icon)
 
   quickinfo_extension = QuickinfoExtension()

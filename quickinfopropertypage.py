@@ -8,7 +8,7 @@ from org.gvsig.app.project.documents.view import ViewDocument
 from org.gvsig.propertypage import PropertiesPageFactory
 from org.gvsig.fmap.mapcontrol import MapControlLocator
 
-from quickinfopanel import QuickinfoPanel
+from addons.quickinfo.quickinfopanel import QuickinfoPanel
 
 from org.gvsig.tools import ToolsLocator
 

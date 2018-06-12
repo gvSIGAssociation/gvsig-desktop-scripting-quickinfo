@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import gvsig
+from gvsig import getResource
 
 import os.path
 
@@ -60,7 +61,7 @@ def selfRegister():
   actionManager = PluginsLocator.getActionInfoManager()
   iconTheme = ToolsSwingLocator.getIconThemeManager().getCurrent()
 
-  quickinfo_icon = File(join(dirname(__file__),"images","quickinfo.png")).toURI().toURL()
+  quickinfo_icon = File(getResource(__file__,"images","quickinfo.png")).toURI().toURL()
   iconTheme.registerDefault("scripting.quickinfo", "action", "tools-quickinfo", None, quickinfo_icon)
 
   quickinfo_extension = QuickinfoExtension()

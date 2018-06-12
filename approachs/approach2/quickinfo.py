@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import gvsig
+from gvsig import getResource
 
 from org.gvsig.fmap.mapcontrol.tools.Behavior import MouseMovementBehavior
 from org.gvsig.fmap.mapcontrol.tools.Listeners import AbstractPointListener

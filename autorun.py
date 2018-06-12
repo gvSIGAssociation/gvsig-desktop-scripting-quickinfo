@@ -3,8 +3,8 @@
 import gvsig
 from gvsig import getResource
 
-import actions
-import quickinfopropertypage
+from addons.quickinfo import actions
+from addons.quickinfo import quickinfopropertypage
 
 reload(actions)
 
