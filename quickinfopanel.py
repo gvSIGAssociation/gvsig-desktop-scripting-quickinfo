@@ -153,8 +153,8 @@ class QuickinfoPanel(FormPanel):
     defaultValues[DataTypes.STRING] = ""
     defaultValues[DataTypes.DATE] = Date()
     defaultValues[DataTypes.TIME] = Date()
-    defaultValues[DataTypes.FILE] = File(__file__)
-    defaultValues[DataTypes.FOLDER] = File(__file__).getParentFile()
+    defaultValues[DataTypes.FILE] = File(getResource(__file__))
+    defaultValues[DataTypes.FOLDER] = File(getResource(__file__)).getParentFile()
     defaultValues[DataTypes.URL] = URL("http://acme.com")
     defaultValues[DataTypes.URI] = URI("http://acme.com")
     defaultValues[DataTypes.VERSION] = ToolsLocator.getPackageManager().createVersion("1.0.0")
