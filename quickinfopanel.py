@@ -177,7 +177,7 @@ class QuickinfoPanel(FormPanel):
     
 def main(*args):
   viewDoc = gvsig.currentView()
-  layer = viewDoc.getLayer("manzanas_pob")
+  layer = gvsig.currentLayer() # viewDoc.getLayer("manzanas_pob")
   panel = QuickinfoPanel(layer)
   panel.setPreferredSize(400,300)
 

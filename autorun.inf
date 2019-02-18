@@ -12,6 +12,7 @@ enable = true
 isolationGroup = gvsig-base
 
 [properties]
-autorun.group.name=gvsig-base
-autorun.group.order=1000
-autorun.order=2150
+autorun.group.name = gvsig-base
+autorun.group.order = 1000
+autorun.order = 2150
+

@@ -1,11 +1,12 @@
 # encoding: utf-8
 
 import gvsig
-
+import sys
 from org.gvsig.fmap.mapcontrol.tools.Behavior import MouseMovementBehavior
 from org.gvsig.fmap.mapcontrol.tools.Listeners import AbstractPointListener
 from org.gvsig.fmap.mapcontext.layers.vectorial import SpatialEvaluatorsFactory
-
+from gvsig import logger
+from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 def trace(msg):
   #print "###> ", msg
   pass
@@ -57,8 +58,9 @@ class QuickInfo(object):
       x = eval(expression, _globals,_locals)
       trace("tooltip: %s" % repr(x))
       return x
-    except Exception, ex:
-      print str(ex)
+    except:
+      ex = sys.exc_info()[1]
+      logger(str(ex), LOGGER_ERROR)
 
   def setTool(self, mapControl):
     actives = mapControl.getMapContext().getLayers().getActives()

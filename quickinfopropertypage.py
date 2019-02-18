@@ -53,7 +53,7 @@ class QuickinfoPropertyPageFactory(PropertiesPageFactory):
       return True
     return False
     
-  def create(self, layer):
+  def create(self, object1, layer):
     if not isinstance(layer,VectorLayer):
       return None
     return QuickinfoPropertyPage(layer)
