@@ -36,12 +36,12 @@ class QuickinfoExtension(ScriptingExtension):
     if layer == None:
       trace("QuickinfoExtension.isLayerValid: None, return False")
       return False
-    mode = layer.getProperty("quickinfo.mode")
-    if mode in ("", None):
+    active = layer.getProperty("quickinfo.active")
+    if active == None:
       # Si la capa no tiene configurado el campo a mostrar
       # no activamos la herramienta
       return False
-    return True
+    return active
     
   def isEnabled(self):
     layer = currentLayer()

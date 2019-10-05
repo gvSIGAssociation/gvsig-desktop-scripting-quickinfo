@@ -23,11 +23,13 @@ from java.math import BigDecimal
 from java.lang import Float
 from java.io import File
 from org.gvsig.tools.dataTypes import DataTypes
-
+from gvsig import logger
+from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 from org.gvsig.tools.evaluator import EvaluatorException
-
+from org.gvsig.expressionevaluator.swing import ExpressionEvaluatorSwingLocator
      
-  
+from org.gvsig.fmap.dal.swing import DALSwingLocator
+
 class QuickinfoPanel(FormPanel):
   def __init__(self, layer=None):
     FormPanel.__init__(self,getResource(__file__,"quickinfopanel.xml"))
@@ -35,39 +37,53 @@ class QuickinfoPanel(FormPanel):
     i18n.translate(self.rdoUseField)
     i18n.translate(self.lblSelectField)
     i18n.translate(self.rdoUseExpression)
-    i18n.translate(self.lblFields)
-    i18n.translate(self.btnTest)
+    i18n.translate(self.chbActivate)
     
     self.btgMode = ButtonGroup()
     self.btgMode.add(self.rdoUseField)
     self.btgMode.add(self.rdoUseExpression)
+    
+    ## Picker
+    self.store = layer.getFeatureStore()
+    self.expPicker = ExpressionEvaluatorSwingLocator.getManager().createExpressionPickerController(self.txtExp, self.btnExp)
+    self.expFilterStore = DALSwingLocator.getSwingManager().createFeatureStoreElement(self.store)
+    self.expPicker.addElement(self.expFilterStore)
+    
+    
+    self.rdoUseField.setSelected(True)
+    self.cboFields.setEnabled(True)
+    self.expPicker.setEnabled(False)
     self.setLayer(layer)
     
   def setLayer(self, layer):
     self.__layer = layer
     if layer==None:
       self.cboFields.removeAllItems()
-      self.lstFields.setModel(DefaultListModel())
       self.txtExpression.setText("")
       self.rdoUseField.setSelected(True)
     else:
       featureType = self.__layer.getFeatureStore().getDefaultFeatureType()
       self.fillCombo( self.cboFields, featureType )
-      self.lstFields.setModel(self.getListModel(featureType))
       s = self.__layer.getProperty("quickinfo.expression")
-      if s == None:
-        s = ""
-      self.txtExpression.setText(s)
+      self.expPicker.set(s)
+      if self.__layer.getProperty("quickinfo.active") != None:
+        self.chbActivate.setSelected(self.__layer.getProperty("quickinfo.active"))
+
       if self.__layer.getProperty("quickinfo.mode") == "useField":
         self.rdoUseField.setSelected(True)
-      else:
+        self.rdoUseField.setSelected(True)
+        self.cboFields.setEnabled(True)
+        self.expPicker.setEnabled(False)
+      elif self.__layer.getProperty("quickinfo.mode") == "useExpression":
         self.rdoUseExpression.setSelected(True)
+      else:
+        self.rdoUseField.setSelected(True)
       
-  def getListModel(self, featureType):
-    model = DefaultListModel()
-    for attr in featureType:
-      model.addElement(attr.getName())
-    return model
+  #def getListModel(self, featureType):
+  #  model = DefaultListModel()
+  #  for attr in featureType:
+  #    model.addElement(attr.getName())
+  #  return model
     
   def getLayer(self):
     return self.__layer
@@ -82,19 +98,13 @@ class QuickinfoPanel(FormPanel):
     return name
 
   def getExpression(self):
-    return self.txtExpression.getText()
-
+    return self.expPicker.get()
+    
   def getMode(self):
     if self.rdoUseField.isSelected():
       return "useField"
     else:
       return "useExpression"
-
-  def lstFields_mouseClick(self, e):
-    if e.getClickCount()==2 and e.getID() == MouseEvent.MOUSE_CLICKED:
-      x = self.lstFields.getSelectedValue()
-      self.txtExpression.replaceSelection(x+" ")
-      self.txtExpression.requestFocusInWindow()
       
   def fillCombo(self, combo, featureType):
     combo.removeAllItems()
@@ -116,6 +126,10 @@ class QuickinfoPanel(FormPanel):
       "quickinfo.expression",
       self.getExpression()
     )
+    self.__layer.setProperty(
+      "quickinfo.active",
+      self.chbActivate.isSelected()
+      )
     if self.rdoUseField.isSelected():
       self.__layer.setProperty(
         "quickinfo.mode",
@@ -130,50 +144,10 @@ class QuickinfoPanel(FormPanel):
   def rdoUseField_change(self, *args):
     if self.rdoUseField.isSelected():
       self.cboFields.setEnabled(True)
-      self.lstFields.setEnabled(False)
-      self.txtExpression.setEnabled(False)
-      self.btnTest.setEnabled(False)
+      self.expPicker.setEnabled(False)
     else:
       self.cboFields.setEnabled(False)
-      self.lstFields.setEnabled(True)
-      self.txtExpression.setEnabled(True)
-      self.btnTest.setEnabled(True)
-    
-  def btnTest_click(self, *args):
-    i18n = ToolsLocator.getI18nManager()
-
-    defaultValues = dict()
-    defaultValues[DataTypes.BOOLEAN] = True
-    defaultValues[DataTypes.BYTE] = 0
-    defaultValues[DataTypes.CHAR] = 0
-    defaultValues[DataTypes.INT] = 0
-    defaultValues[DataTypes.LONG] = 0
-    defaultValues[DataTypes.FLOAT] = Float(0.0)
-    defaultValues[DataTypes.DOUBLE] = Double(0.0)
-    defaultValues[DataTypes.STRING] = ""
-    defaultValues[DataTypes.DATE] = Date()
-    defaultValues[DataTypes.TIME] = Date()
-    defaultValues[DataTypes.FILE] = File(getResource(__file__))
-    defaultValues[DataTypes.FOLDER] = File(getResource(__file__)).getParentFile()
-    defaultValues[DataTypes.URL] = URL("http://acme.com")
-    defaultValues[DataTypes.URI] = URI("http://acme.com")
-    defaultValues[DataTypes.VERSION] = ToolsLocator.getPackageManager().createVersion("1.0.0")
-    defaultValues[DataTypes.BIGDECIMAL] = BigDecimal(0)
-
-    values = dict()
-    featureType = self.__layer.getFeatureStore().getDefaultFeatureType()
-    for attr in featureType:
-      values[attr.getName()] = defaultValues.get(attr.getType(),None)
-    try:
-      expression = self.getExpression().replace("\n"," ")
-      x = eval(expression,globals(),values)
-      #print "x = ", x
-      gvsig.commonsdialog.msgbox(i18n.getTranslation("_Correct_expression"))
-    except Exception,ex:
-      gvsig.commonsdialog.msgbox(i18n.getTranslation("_Errors_have_occurred_checking_the_expression") + "\n\n" + str(ex))
-    except :
-      gvsig.commonsdialog.msgbox(i18n.getTranslation("_Errors_have_occurred_checking_the_expression") + "\n\n")
-    
+      self.expPicker.setEnabled(True)
     
 def main(*args):
   viewDoc = gvsig.currentView()

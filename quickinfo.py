@@ -7,6 +7,9 @@ from org.gvsig.fmap.mapcontrol.tools.Listeners import AbstractPointListener
 from org.gvsig.fmap.mapcontext.layers.vectorial import SpatialEvaluatorsFactory
 from gvsig import logger
 from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
+from org.gvsig.expressionevaluator import ExpressionEvaluatorLocator
+from org.gvsig.fmap.dal import DALLocator
+
 def trace(msg):
   #print "###> ", msg
   pass
@@ -22,6 +25,9 @@ class QuickInfo(object):
       fieldName = self.__layer.getProperty("quickinfo.fieldname")
       expression = self.__layer.getProperty("quickinfo.expression")
       mode = self.__layer.getProperty("quickinfo.mode")
+      activate = self.__layer.getProperty("quickinfo.active")
+      if activate == False:
+        return
       if mode == "useField":
         if fieldName in ("", None):
           trace('QuickInfo.getTooltipValue: %s return ""' % repr(fieldName))
@@ -41,22 +47,20 @@ class QuickInfo(object):
 
       # Con que nos devuelba la primera linea es suficiente.
       query.setLimit(1)
-      query.retrievesAllAttributes();
-      l = store.getFeatures(query,100)
-      if len(l) < 1:
+      query.retrievesAllAttributes()
+      firstfeature = store.findFirst(query)
+      if firstfeature == None:
         trace('QuickInfo.getTooltipValue: %s point %s, no records selected return ""' % (repr(fieldName), point.convertToWKT()) )
         return ""
       if mode == "useField":
-        return str(l[0].get(fieldName))
-      _globals = dict()
-      _globals.update(globals())
-      _globals["store"] = store
-      _globals["layer"] = self.__layer
-      _locals = dict()
-      _locals.update(l[0])
-      expression = expression.replace("\n"," ")
-      x = eval(expression, _globals,_locals)
-      trace("tooltip: %s" % repr(x))
+        return str(firstfeature.get(fieldName))
+
+      # Eval expression with expression
+      manager = ExpressionEvaluatorLocator.getManager()
+      dataManager = DALLocator.getDataManager()
+      featureSymbolTable = dataManager.createFeatureSymbolTable()
+      featureSymbolTable.setFeature(firstfeature)
+      x = expression.execute(featureSymbolTable)
       return x
     except:
       ex = sys.exc_info()[1]
