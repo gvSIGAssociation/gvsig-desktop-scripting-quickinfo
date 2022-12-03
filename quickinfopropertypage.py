@@ -61,6 +61,13 @@ class QuickinfoPropertyPageFactory(PropertiesPageFactory):
 def selfRegister():
   propertiesPageManager = MapControlLocator.getPropertiesPageManager()
   propertiesPageManager.registerFactory(QuickinfoPropertyPageFactory())
+  
+  dynObjectManager = ToolsLocator.getDynObjectManager()
+  dynObjectManager.registerTag("Layer.quickinfo.active", "Values are true or false.")
+  dynObjectManager.registerTag("Layer.quickinfo.mode", "Values are useField or useExpression")
+  dynObjectManager.registerTag("Layer.quickinfo.expression", "")
+  dynObjectManager.registerTag("Layer.quickinfo.fieldname", "")
+
 
 def main(*args):
   selfRegister()
