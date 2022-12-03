@@ -9,6 +9,8 @@ from gvsig import logger
 from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 from org.gvsig.expressionevaluator import ExpressionEvaluatorLocator
 from org.gvsig.fmap.dal import DALLocator
+from org.gvsig.tools.dataTypes import DataTypeUtils
+from org.gvsig.expressionevaluator import ExpressionUtils
 
 def trace(msg):
   #print "###> ", msg
@@ -23,9 +25,9 @@ class QuickInfo(object):
   def getTooltipValue(self, point, projection):
     try:
       fieldName = self.__layer.getProperty("quickinfo.fieldname")
-      expression = self.__layer.getProperty("quickinfo.expression")
+      expression = ExpressionUtils.createExpression(self.__layer.getProperty("quickinfo.expression"))
       mode = self.__layer.getProperty("quickinfo.mode")
-      activate = self.__layer.getProperty("quickinfo.active")
+      activate = DataTypeUtils.toBoolean(self.__layer.getProperty("quickinfo.active"))
       if activate == False:
         return
       if mode == "useField":

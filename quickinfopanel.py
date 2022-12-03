@@ -27,8 +27,11 @@ from gvsig import logger
 from gvsig import LOGGER_WARN,LOGGER_INFO,LOGGER_ERROR
 from org.gvsig.tools.evaluator import EvaluatorException
 from org.gvsig.expressionevaluator.swing import ExpressionEvaluatorSwingLocator
+from org.gvsig.expressionevaluator import ExpressionUtils
      
 from org.gvsig.fmap.dal.swing import DALSwingLocator
+from org.gvsig.tools.dataTypes import DataTypeUtils
+from org.gvsig.expressionevaluator import ExpressionUtils
 
 class QuickinfoPanel(FormPanel):
   def __init__(self, layer=None):
@@ -47,7 +50,7 @@ class QuickinfoPanel(FormPanel):
     self.store = layer.getFeatureStore()
     self.expPicker = ExpressionEvaluatorSwingLocator.getManager().createExpressionPickerController(self.txtExp, self.btnExp)
     self.expFilterStore = DALSwingLocator.getSwingManager().createFeatureStoreElement(self.store)
-    self.expPicker.addElement(self.expFilterStore)
+    self.expPicker.getConfig().addElement(self.expFilterStore)
     
     
     self.rdoUseField.setSelected(True)
@@ -64,10 +67,10 @@ class QuickinfoPanel(FormPanel):
     else:
       featureType = self.__layer.getFeatureStore().getDefaultFeatureType()
       self.fillCombo( self.cboFields, featureType )
-      s = self.__layer.getProperty("quickinfo.expression")
+      s = ExpressionUtils.createExpression(self.__layer.getProperty("quickinfo.expression"))
       self.expPicker.set(s)
       if self.__layer.getProperty("quickinfo.active") != None:
-        self.chbActivate.setSelected(self.__layer.getProperty("quickinfo.active"))
+        self.chbActivate.setSelected(DataTypeUtils.toBoolean(self.__layer.getProperty("quickinfo.active")))
 
       if self.__layer.getProperty("quickinfo.mode") == "useField":
         self.rdoUseField.setSelected(True)
@@ -124,7 +127,7 @@ class QuickinfoPanel(FormPanel):
     )
     self.__layer.setProperty(
       "quickinfo.expression",
-      self.getExpression()
+      ExpressionUtils.getPhrase(self.getExpression())
     )
     self.__layer.setProperty(
       "quickinfo.active",
@@ -162,7 +165,7 @@ def main(*args):
     "Quickinfo information",
     winmgr.BUTTONS_OK_CANCEL
   )
-  dialog.show(winmgr.MODE.DIALOG)
+  dialog.show(winmgr.MODE.WINDOW)
   if dialog.getAction()==winmgr.BUTTON_OK:
     panel.save()
     print "Ok"
