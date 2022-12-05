@@ -55,7 +55,7 @@ class QuickInfo(object):
         trace('QuickInfo.getTooltipValue: %s point %s, no records selected return ""' % (repr(fieldName), point.convertToWKT()) )
         return ""
       if mode == "useField":
-        return str(firstfeature.get(fieldName))
+        return firstfeature.get(fieldName)
 
       # Eval expression with expression
       manager = ExpressionEvaluatorLocator.getManager()
@@ -113,7 +113,10 @@ class QuickInfoListener(AbstractPointListener):
     p = event.getMapPoint()
     p = p.buffer(self.__tolerance).getEnvelope().getGeometry()
     tip = self.quickinfo.getTooltipValue(p,self.projection)
-    self.mapControl.setToolTipText(unicode(tip, 'utf-8'))
+    if isinstance(tip, unicode):
+      self.mapControl.setToolTipText(tip)
+    else :
+      self.mapControl.setToolTipText(unicode(tip, 'utf-8', 'ignore'))
 
 def main(*args):      
   viewDoc = gvsig.currentView()
