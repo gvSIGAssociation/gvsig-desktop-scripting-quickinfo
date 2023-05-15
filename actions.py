@@ -86,7 +86,7 @@ def selfRegister():
   # Añadimos la entrada "Quickinfo" en el menu herramientas
   application.addMenu(quickinfo_action, "tools/_Quickinfo")
   # Añadimos el la accion como un boton en la barra de herramientas "Quickinfo".
-  application.addSelectableTool(quickinfo_action, "Quickinfo")
+  application.addSelectableTool(quickinfo_action, "view_tools_query")
 
 def main(*args):
   selfRegister()
