@@ -1,11 +1,11 @@
 #
-#Sat Oct 05 18:23:56 CEST 2019
+#Wed May 17 11:52:31 CEST 2023
 owner=gvSIG Association
 code=quickinfo
 java-version=j1_7
 official=true
 type=Script
-version=1.0.0-12
+version=1.0.0-14
 state=testing
 operating-system=all
 dependencies=
@@ -16,6 +16,7 @@ model-version=1.0.1
 categories=View
 description=Show information over a vector data shape and it is updated when the mouse is moving between features.
 owner-url=http\://www.gvsig.com/
-buildNumber=12
-gvSIG-version=2.5.0
+buildNumber=14
+download-url=https\://github.com/gvSIGAssociation/gvsig-desktop-scripting-quickinfo/releases/download/1.0.0-14/gvSIG-desktop-2.6.0-quickinfo-1.0.0-14-testing-all-all-j1_7.gvspkg
+gvSIG-version=2.6.0
 name=Tools\: Quick Info
